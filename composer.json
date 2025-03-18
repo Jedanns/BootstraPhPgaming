@@ -1,5 +1,5 @@
 {
-    "name": "votre-nom/mon-application",
+    "name": "slogone/mon-application",
     "description": "Une application MVC PHP avec authentification",
     "type": "project",
     "autoload": {
