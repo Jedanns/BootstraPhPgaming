@@ -1,0 +1,35 @@
+/* Styles personnalisés */
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1;
+}
+
+.error-page {
+    padding: 60px 0;
+}
+
+.error-page h1 {
+    font-size: 120px;
+    color: #dc3545;
+}
+
+/* Styles pour le tableau de bord */
+.dashboard-card {
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Styles pour les formulaires d'authentification */
+.auth-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
