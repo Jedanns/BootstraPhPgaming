@@ -11,7 +11,12 @@ define('DB_PASSWORD', $_ENV['MYSQL_PASSWORD'] ?? $_ENV['DB_PASSWORD']);
 
 // Configuration de l'application
 define('APP_NAME', $_ENV['APP_NAME'] ?? 'Mon Application');
-define('APP_URL', $_ENV['APP_URL'] ?? 'http://localhost:8080');
+
+// Détection automatique de l'URL du serveur
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost:8080';
+define('APP_URL', $protocol . $host);
+
 define('APP_ENV', $_ENV['APP_ENV'] ?? 'development');
 define('APP_DEBUG', $_ENV['APP_DEBUG'] ?? true);
 

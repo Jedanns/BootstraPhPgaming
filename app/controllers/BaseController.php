@@ -49,7 +49,12 @@ class BaseController
      */
     protected function redirect($url)
     {
-        header("Location: " . APP_URL . '/' . $url);
+        // Obtenir l'URL actuelle pour la redirection
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost:8080';
+        $baseUrl = $protocol . $host;
+        
+        header("Location: " . $baseUrl . '/' . $url);
         exit;
     }
     
