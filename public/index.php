@@ -3,6 +3,11 @@
  * Front Controller - Point d'entrée unique
  */
 
+// Forcer l'affichage des erreurs pour le débogage
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Définir le chemin racine
 define('ROOT_PATH', dirname(__DIR__));
 

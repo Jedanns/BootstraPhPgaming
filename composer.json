@@ -1,11 +1,16 @@
 {
-    "name": "slogone/mon-application",
+    "name": "votre-nom/mon-application",
     "description": "Une application MVC PHP avec authentification",
     "type": "project",
     "autoload": {
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "classmap": [
+            "app/controllers/",
+            "app/models/",
+            "app/config/"
+        ]
     },
     "require": {
         "php": ">=8.0",

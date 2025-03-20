@@ -6,6 +6,19 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Config\\Router' => $baseDir . '/app/config/Router.php',
+    'App\\Controllers\\AuthController' => $baseDir . '/app/controllers/AuthController.php',
+    'App\\Controllers\\BaseController' => $baseDir . '/app/controllers/BaseController.php',
+    'App\\Controllers\\ErrorController' => $baseDir . '/app/controllers/ErrorController.php',
+    'App\\Controllers\\FriendController' => $baseDir . '/app/controllers/FriendController.php',
+    'App\\Controllers\\HomeController' => $baseDir . '/app/controllers/HomeController.php',
+    'App\\Controllers\\MessageController' => $baseDir . '/app/controllers/MessageController.php',
+    'App\\Models\\BaseModel' => $baseDir . '/app/models/BaseModel.php',
+    'App\\Models\\ConversationModel' => $baseDir . '/app/models/ConversationModel.php',
+    'App\\Models\\Database' => $baseDir . '/app/models/Database.php',
+    'App\\Models\\FriendModel' => $baseDir . '/app/models/FriendModel.php',
+    'App\\Models\\MessageModel' => $baseDir . '/app/models/MessageModel.php',
+    'App\\Models\\UserModel' => $baseDir . '/app/models/UserModel.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'DeepCopy\\DeepCopy' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',

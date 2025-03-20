@@ -35,6 +35,30 @@
                     </div>
                     
                     <div class="col-md-6 mb-3">
+                        <a href="<?= APP_URL ?>/friend" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 border rounded">
+                                <i class="fas fa-users fa-2x text-success me-3"></i>
+                                <div>
+                                    <h6 class="mb-0">Amis</h6>
+                                    <small class="text-muted">Gérez vos contacts et amis</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <a href="<?= APP_URL ?>/message" class="text-decoration-none">
+                            <div class="d-flex align-items-center p-3 border rounded">
+                                <i class="fas fa-comments fa-2x text-primary me-3"></i>
+                                <div>
+                                    <h6 class="mb-0">Messages</h6>
+                                    <small class="text-muted">Discutez avec vos amis</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
                         <div class="d-flex align-items-center p-3 border rounded">
                             <i class="fas fa-stopwatch fa-2x text-success me-3"></i>
                             <div>

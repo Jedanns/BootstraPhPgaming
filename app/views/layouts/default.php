@@ -32,6 +32,17 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<?= APP_URL ?>/home/dashboard">Tableau de bord</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= APP_URL ?>/friend">
+                                <i class="fas fa-users"></i> Amis
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= APP_URL ?>/message">
+                                <i class="fas fa-comments"></i> Messages
+                                <!-- Le compteur de messages non lus sera ajouté ultérieurement -->
+                            </a>
+                        </li>
                         <?php endif; ?>
                     </ul>
                     <ul class="navbar-nav">

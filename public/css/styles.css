@@ -1,5 +1,6 @@
 /* Styles personnalisés */
-
+@import url('friends.css');
+@import url('messages.css');
 body {
     display: flex;
     flex-direction: column;

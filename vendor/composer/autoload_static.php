@@ -86,6 +86,19 @@ class ComposerStaticInitdad0caceb1b1b218fd0adeb8a5f70cbd
     );
 
     public static $classMap = array (
+        'App\\Config\\Router' => __DIR__ . '/../..' . '/app/config/Router.php',
+        'App\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/controllers/AuthController.php',
+        'App\\Controllers\\BaseController' => __DIR__ . '/../..' . '/app/controllers/BaseController.php',
+        'App\\Controllers\\ErrorController' => __DIR__ . '/../..' . '/app/controllers/ErrorController.php',
+        'App\\Controllers\\FriendController' => __DIR__ . '/../..' . '/app/controllers/FriendController.php',
+        'App\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/controllers/HomeController.php',
+        'App\\Controllers\\MessageController' => __DIR__ . '/../..' . '/app/controllers/MessageController.php',
+        'App\\Models\\BaseModel' => __DIR__ . '/../..' . '/app/models/BaseModel.php',
+        'App\\Models\\ConversationModel' => __DIR__ . '/../..' . '/app/models/ConversationModel.php',
+        'App\\Models\\Database' => __DIR__ . '/../..' . '/app/models/Database.php',
+        'App\\Models\\FriendModel' => __DIR__ . '/../..' . '/app/models/FriendModel.php',
+        'App\\Models\\MessageModel' => __DIR__ . '/../..' . '/app/models/MessageModel.php',
+        'App\\Models\\UserModel' => __DIR__ . '/../..' . '/app/models/UserModel.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'DeepCopy\\DeepCopy' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
