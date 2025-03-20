@@ -23,6 +23,16 @@ class BaseModel
     }
     
     /**
+     * Récupère la connexion à la base de données
+     * 
+     * @return PDO
+     */
+    public function getDb()
+    {
+        return $this->db;
+    }
+    
+    /**
      * Récupère tous les enregistrements
      * 
      * @return array

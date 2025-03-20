@@ -172,26 +172,26 @@ class FriendModel extends BaseModel
     public function getFriends($userId)
     {
         try {
+            // Version simplifiée de la requête
             $stmt = $this->db->prepare("
                 SELECT 
-                    u.id, u.username, u.email, u.name, u.created_at,
-                    CASE 
-                        WHEN f.user_id = :bind_user_id THEN f.friend_id
-                        ELSE f.user_id
-                    END AS friend_id,
-                    f.status, f.created_at as friendship_date
-                FROM {$this->table} f
-                JOIN users u ON (
-                    (f.user_id = :bind_user_id AND f.friend_id = u.id) OR
-                    (f.friend_id = :bind_user_id AND f.user_id = u.id)
+                    u.*,
+                    f.created_at as friendship_date
+                FROM users u
+                JOIN friends f ON (
+                    (f.user_id = :user_id AND f.friend_id = u.id) OR
+                    (f.friend_id = :user_id AND f.user_id = u.id)
                 )
-                WHERE (f.user_id = :bind_user_id OR f.friend_id = :bind_user_id)
-                AND f.status = 'accepted'
+                WHERE f.status = 'accepted'
             ");
             
-            $stmt->execute([':bind_user_id' => $userId]);
+            $stmt->execute([':user_id' => $userId]);
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // Log pour débogage
+            error_log("Nombre d'amis trouvés pour l'utilisateur $userId: " . count($results));
+            
+            return $results;
         } catch (PDOException $e) {
             // Log error or handle exception
             error_log('Error in getFriends: ' . $e->getMessage());

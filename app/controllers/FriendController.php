@@ -80,6 +80,11 @@ class FriendController extends BaseController
         $search = '';
         $results = [];
         
+        // Détecter si la requête est AJAX
+        $isAjax = isset($_POST['ajax']) || 
+                 (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+                  strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+        
         // Traiter la recherche si soumise
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $search = trim($_POST['search'] ?? '');
@@ -106,9 +111,87 @@ class FriendController extends BaseController
                         $user['relation'] = null;
                     }
                 }
+                
+                // Réindexer le tableau après le filtrage
+                $results = array_values($results);
+            }
+            
+            // Pour les requêtes AJAX, renvoyer seulement le HTML des résultats
+            if ($isAjax) {
+                ob_start();
+                if (empty($results)) {
+                    echo '<div class="alert alert-info">';
+                    echo '<p class="mb-0">Aucun utilisateur trouvé pour "' . htmlspecialchars($search) . '".</p>';
+                    echo '</div>';
+                } else {
+                    echo '<h6 class="mb-3">Résultats de recherche pour "' . htmlspecialchars($search) . '":</h6>';
+                    echo '<div class="list-group">';
+                    
+                    foreach ($results as $user) {
+                        echo '<div class="list-group-item d-flex justify-content-between align-items-center">';
+                        echo '<div>';
+                        echo '<div class="d-flex align-items-center">';
+                        echo '<div class="avatar-placeholder me-3">';
+                        echo '<i class="fas fa-user fa-2x text-secondary"></i>';
+                        echo '</div>';
+                        echo '<div>';
+                        echo '<h6 class="mb-0">' . htmlspecialchars($user['username']) . '</h6>';
+                        echo '<small class="text-muted">' . htmlspecialchars($user['name'] ?? 'Sans nom') . '</small>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '<div>';
+                        
+                        if (isset($user['relation'])) {
+                            if ($user['relation'] === 'accepted') {
+                                echo '<span class="badge bg-success"><i class="fas fa-check"></i> Amis</span>';
+                            } elseif ($user['relation'] === 'pending') {
+                                if ($user['is_sender']) {
+                                    echo '<span class="badge bg-secondary"><i class="fas fa-clock"></i> Invitation envoyée</span>';
+                                } else {
+                                    echo '<div class="btn-group">';
+                                    echo '<form action="' . APP_URL . '/friend/accept" method="post" class="me-1">';
+                                    echo '<input type="hidden" name="relation_id" value="' . $user['relation_id'] . '">';
+                                    echo '<input type="hidden" name="redirect" value="friend/search">';
+                                    echo '<button type="submit" class="btn btn-success btn-sm">';
+                                    echo '<i class="fas fa-check"></i> Accepter';
+                                    echo '</button>';
+                                    echo '</form>';
+                                    echo '<form action="' . APP_URL . '/friend/reject" method="post">';
+                                    echo '<input type="hidden" name="relation_id" value="' . $user['relation_id'] . '">';
+                                    echo '<input type="hidden" name="redirect" value="friend/search">';
+                                    echo '<button type="submit" class="btn btn-outline-danger btn-sm">';
+                                    echo '<i class="fas fa-times"></i> Refuser';
+                                    echo '</button>';
+                                    echo '</form>';
+                                    echo '</div>';
+                                }
+                            } elseif ($user['relation'] === 'blocked') {
+                                echo '<span class="badge bg-danger"><i class="fas fa-ban"></i> Bloqué</span>';
+                            }
+                        } else {
+                            echo '<form action="' . APP_URL . '/friend/add" method="post">';
+                            echo '<input type="hidden" name="friend_id" value="' . $user['id'] . '">';
+                            echo '<input type="hidden" name="redirect" value="friend/search">';
+                            echo '<button type="submit" class="btn btn-primary btn-sm">';
+                            echo '<i class="fas fa-user-plus"></i> Ajouter';
+                            echo '</button>';
+                            echo '</form>';
+                        }
+                        
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                    
+                    echo '</div>';
+                }
+                $searchResults = ob_get_clean();
+                echo $searchResults;
+                exit; // Terminer l'exécution pour AJAX
             }
         }
         
+        // Pour les requêtes normales, afficher la page complète
         $data = [
             'title' => 'Rechercher des amis',
             'search' => $search,
@@ -177,15 +260,8 @@ class FriendController extends BaseController
             $userId = $_SESSION['user_id'];
             $relationId = isset($_POST['relation_id']) ? (int)$_POST['relation_id'] : 0;
             
-            // Récupérer la relation
-            $stmt = $this->friendModel->db->prepare("
-                SELECT * FROM friends WHERE id = :id AND friend_id = :user_id LIMIT 1
-            ");
-            $stmt->bindParam(':id', $relationId, \PDO::PARAM_INT);
-            $stmt->bindParam(':user_id', $userId, \PDO::PARAM_INT);
-            $stmt->execute();
-            
-            $relation = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // Récupérer la relation en utilisant le modèle Friend
+            $relation = $this->getFriendRequest($relationId, $userId);
             
             if ($relation) {
                 // Accepter la demande
@@ -206,6 +282,26 @@ class FriendController extends BaseController
     }
     
     /**
+     * Récupère une demande d'ami par son ID pour un utilisateur
+     * 
+     * @param int $relationId ID de la relation
+     * @param int $userId ID de l'utilisateur
+     * @return array|false
+     */
+    private function getFriendRequest($relationId, $userId)
+    {
+        $db = $this->friendModel->getDb();
+        $stmt = $db->prepare("
+            SELECT * FROM friends WHERE id = :id AND friend_id = :user_id LIMIT 1
+        ");
+        $stmt->bindParam(':id', $relationId, \PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $userId, \PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+    
+    /**
      * Rejeter une demande d'amitié
      */
     public function reject()
@@ -217,15 +313,8 @@ class FriendController extends BaseController
             $userId = $_SESSION['user_id'];
             $relationId = isset($_POST['relation_id']) ? (int)$_POST['relation_id'] : 0;
             
-            // Récupérer la relation
-            $stmt = $this->friendModel->db->prepare("
-                SELECT * FROM friends WHERE id = :id AND friend_id = :user_id LIMIT 1
-            ");
-            $stmt->bindParam(':id', $relationId, \PDO::PARAM_INT);
-            $stmt->bindParam(':user_id', $userId, \PDO::PARAM_INT);
-            $stmt->execute();
-            
-            $relation = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // Récupérer la relation en utilisant la nouvelle méthode
+            $relation = $this->getFriendRequest($relationId, $userId);
             
             if ($relation) {
                 // Rejeter la demande

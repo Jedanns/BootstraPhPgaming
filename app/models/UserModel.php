@@ -114,48 +114,21 @@ class UserModel extends BaseModel
     public function searchUsers($search)
     {
         try {
-            // Trim and handle short search terms
-            $search = trim($search);
-            
-            // If search is too short, return empty array
-            if (strlen($search) < 2) {
-                return [];
-            }
-            
-            $searchParam = "%{$search}%";
-            
+            // Version ultra-simple
             $stmt = $this->db->prepare("
-                SELECT 
-                    id, 
-                    username, 
-                    email, 
-                    name, 
-                    created_at,
-                    CASE 
-                        WHEN username LIKE :exact_username THEN 1
-                        WHEN name LIKE :exact_name THEN 2
-                        WHEN email LIKE :exact_email THEN 3
-                        ELSE 4
-                    END as relevance
+                SELECT id, username, email, name, created_at 
                 FROM {$this->table}
-                WHERE 
-                    username LIKE :search 
-                    OR email LIKE :search 
-                    OR name LIKE :search
-                ORDER BY relevance, username
+                WHERE username LIKE ? OR email LIKE ? OR name LIKE ?
                 LIMIT 50
             ");
             
-            $stmt->execute([
-                ':search' => $searchParam,
-                ':exact_username' => $search,
-                ':exact_name' => $search,
-                ':exact_email' => $search
-            ]);
+            $searchPattern = '%' . $search . '%';
+            $stmt->bindValue(1, $searchPattern, PDO::PARAM_STR);
+            $stmt->bindValue(2, $searchPattern, PDO::PARAM_STR);
+            $stmt->bindValue(3, $searchPattern, PDO::PARAM_STR);
             
-            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            return $results;
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log('Error searching users: ' . $e->getMessage());
             return [];
